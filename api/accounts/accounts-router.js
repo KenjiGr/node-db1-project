@@ -13,23 +13,23 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id',checkAccountId, (req, res, next) => {
   res.json(req.account);
-})
+});
 
 router.post('/',checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
   try{
-    const newAccount = await Account.create(req,body);
+    const newAccount = await Account.create(req.body);
     res.status(201).json(newAccount);
   }catch (err){
     next(err);
   }
-})
+});
 
 router.put('/:id', checkAccountId, checkAccountNameUnique, async (req, res, next) => {
   try{
     const updated = await Account.updateById(req.params.id, req.body);
-    res.json(updated)
+    res.json(updated);
   }catch (err){
-    next(err)
+    next(err);
   }
 });
 
@@ -40,12 +40,12 @@ router.delete('/:id',checkAccountId, async (req, res, next) => {
   }catch (err){
     next(err);
   }
-})
+});
 
 router.use((err, req, res, next) => { // eslint-disable-line
   res.status(err.status || 500).json({
     message: err.message
-  })
-})
+  });
+});
 
 module.exports = router;

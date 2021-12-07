@@ -2,22 +2,19 @@ const Account = require('./accounts-model');
 const db = require('../../data/db-config');
 
 exports.checkAccountPayload = (req, res, next) => {
-  const error = { status: 400 }
-  const{ name, budget } = req.body
-  if( name === undefined || budget === undefined ) {
-    error.message = 'name and budget are required'
-  }else if (typeof name !== 'string') {
-    error.message = 'name of account must be a string'
-  }else if (name.trim().length < 3 || name.trim().length> 100){
-    error.message = 'name of account must be between 3 and 100'
-  }else if (typeof budget !== 'number' || !isNaN(budget)){
-    error.message = 'budget of account must be a number'
-  }else if (budget < 0 || budget > 1000000) {
-    error.message = 'budget of account is too large or too small'
-  }
-  if(error.message){
-    next(error)
-  }else{
+  let { name, budget } = req.body;
+  // name = name.trim();
+  if (name === undefined || budget === undefined) {
+    res.status(400).json({ message: 'name and budget are required' })
+  }else if (typeof(name) != 'string') {
+    res.status(400).json({ message: "name of account must be a string" })
+  }else if (name.trim().length < 3 || name.trim().length > 100) {
+    res.status(400).json({ message: "name of account must be between 3 and 100" })
+  }else if (typeof budget !== 'number' || isNaN(budget)) {
+    res.status(400).json({ message: "budget of account must be a number" })
+  }else if (budget <= 1 || budget > 1000000) {
+    res.status(400).json({ message: "budget of account is too large or too small" })
+  }else {
     next()
   }
 }
@@ -42,12 +39,9 @@ exports.checkAccountId = async (req, res, next) => {
   try{
     const account = await Account.getById(req.params.id)
     if(!account) {
-      next({ 
-        status: 404,
-        message: 'account not found'
-      })
+      res.status(404).json({message: 'account not found'})
     }else {
-      res.account = account
+      res.json(account)
       next()
     }
   }catch (err){
