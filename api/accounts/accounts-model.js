@@ -9,6 +9,7 @@ async function getById(id){
   const row = await db('accounts')
     // .select('id', 'name', 'budget')
     .where('id', id)
+    .first()
     return row
 }
 
